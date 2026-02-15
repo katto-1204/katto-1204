@@ -1,5 +1,6 @@
-<div align="center">
-  <img width="400" src="https://github-readme-stats.vercel.app/api?username=katto-1204&theme=dark&show_icons=true&hide_border=true&count_private=true"/>
-  <img width="425" src="https://github-readme-streak-stats.herokuapp.com/?user=katto-1204&theme=dark&hide_border=true"/>
-  <img width="400" src="https://github-readme-stats.vercel.app/api/top-langs/?username=katto-1204&layout=compact&theme=dark&hide_border=true"/>
-</div>
+<a href="https://git.io/streak-stats">
+  <img
+    src="https://streak-stats.demolab.com?user=katto-1204&theme=hacker-inverted&border_radius=50&mode=weekly&card_width=500&card_height=90"
+    alt="GitHub Streak"
+  />
+</a>
