@@ -31,6 +31,8 @@ jobs:
           plugin_languages_sections: most-used, recently-used
           plugin_topics: yes
           plugin_topics_mode: icons
+          plugin_repositories: yes
+          plugin_repositories_featured: katto-1204/katto-1204
 
       - uses: lowlighter/metrics@latest
         with:
@@ -42,6 +44,8 @@ jobs:
           plugin_habits_facts: yes
           plugin_achievements: yes
           plugin_achievements_display: compact
+          plugin_skyline: yes
+          plugin_skyline_year: 2020
 
       - uses: lowlighter/metrics@latest
         with:
