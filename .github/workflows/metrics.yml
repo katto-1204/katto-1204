@@ -47,7 +47,13 @@ jobs:
           plugin_skyline: yes
           plugin_skyline_year: 2020
 
-      - uses: lowlighter/metrics@latest
+      - name: Install GitHub Skyline Extension
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh extension install github/gh-skyline
+
+      - name: GitHub City
+        uses: lowlighter/metrics@latest
         with:
           filename: github-metrics-right-3.svg
           token: NOT_NEEDED
