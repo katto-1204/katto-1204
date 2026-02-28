@@ -9,20 +9,18 @@
 </td>
 <td valign="top" width="50%">
 
-## Latest blog posts
-<!-- blog start -->
-<!-- blog end -->
-Read more on [yourblog.com](https://yourblog.com)
-
-</td>
-</tr>
-</table>
+<img src="github-metrics-right.svg" alt="Metrics Right" />
 
 <div align="center">
   <a href="https://git.io/streak-stats">
     <img
-      src="https://streak-stats.demolab.com?user=katto-1204&theme=hacker-inverted&border_radius=50&mode=weekly&card_width=800&card_height=90"
+      src="https://streak-stats.demolab.com?user=katto-1204&theme=hacker-inverted&border_radius=50&mode=weekly"
       alt="GitHub Streak"
+      width="100%"
     />
   </a>
 </div>
+
+</td>
+</tr>
+</table>
