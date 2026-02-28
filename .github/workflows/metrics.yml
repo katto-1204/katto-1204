@@ -27,8 +27,12 @@ jobs:
           filename: github-metrics-right-1.svg
           token: ${{ secrets.METRICS_TOKEN }}
           base: ""
+          plugin_lines: yes
+          plugin_activity: yes
+          plugin_activity_limit: 5
+          plugin_activity_days: 14
+          plugin_activity_filter: all
           plugin_languages: yes
-          plugin_languages_indepth: yes
           plugin_languages_sections: most-used, recently-used
           plugin_topics: yes
           plugin_topics_mode: icons
@@ -45,8 +49,6 @@ jobs:
           plugin_habits_facts: yes
           plugin_achievements: yes
           plugin_achievements_display: compact
-          plugin_skyline: yes
-          plugin_skyline_year: 2020
 
       - name: Generate ASCII Skyline
         env:
@@ -56,16 +58,18 @@ jobs:
           gh skyline --user katto-1204 --year 2024 --art-only > skyline.txt
           python -c "
           import re
-          with open('skyline.txt', 'r') as f:
+          with open('skyline.txt', 'r', encoding='utf-8') as f:
               skyline = f.read()
-          with open('README.md', 'r') as f:
+          with open('README.md', 'r', encoding='utf-8') as f:
               readme = f.read()
+          ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+          skyline = ansi_escape.sub('', skyline)
           readme = re.sub(r'<!-- skyline start -->.*<!-- skyline end -->', f'<!-- skyline start -->\n<pre>\n{skyline}\n</pre>\n<!-- skyline end -->', readme, flags=re.DOTALL)
-          with open('README.md', 'w') as f:
+          with open('README.md', 'w', encoding='utf-8') as f:
               f.write(readme)
           "
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add README.md
-          git commit -m "Update GitHub Skyline ASCII Art" || echo "No changes to commit"
+          git commit -m \"Update GitHub Skyline ASCII Art\" || echo \"No changes to commit\"
           git push
