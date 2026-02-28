@@ -10,6 +10,7 @@ jobs:
     permissions:
       contents: write
     steps:
+      - uses: actions/checkout@v3
       - uses: lowlighter/metrics@latest
         with:
           filename: github-metrics.svg
@@ -47,25 +48,24 @@ jobs:
           plugin_skyline: yes
           plugin_skyline_year: 2020
 
-      - name: Install GitHub Skyline Extension
+      - name: Generate ASCII Skyline
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh extension install github/gh-skyline
-
-      - name: GitHub City
-        uses: lowlighter/metrics@latest
-        with:
-          filename: github-metrics-right-3.svg
-          token: NOT_NEEDED
-          base: ""
-          plugin_skyline: yes
-          plugin_skyline_year: 2020
-          plugin_skyline_frames: 6
-          plugin_skyline_quality: 1
-          plugin_skyline_settings: |
-            {
-              "url": "https://honzaap.github.io/GithubCity?name=${login}&year=${year}",
-              "ready": "[...document.querySelectorAll('.display-info span')].map(span => span.innerText).includes('${login}')",
-              "wait": 4,
-              "hide": ".github-corner, .footer-link, .buttons-options, .mobile-rotate, .display-info span:first-child"
-            }
+          GH_TOKEN: ${{ secrets.METRICS_TOKEN }}
+        run: |
+          gh extension install github/gh-skyline
+          gh skyline --user katto-1204 --year 2024 --art-only > skyline.txt
+          python -c "
+          import re
+          with open('skyline.txt', 'r') as f:
+              skyline = f.read()
+          with open('README.md', 'r') as f:
+              readme = f.read()
+          readme = re.sub(r'<!-- skyline start -->.*<!-- skyline end -->', f'<!-- skyline start -->\n<pre>\n{skyline}\n</pre>\n<!-- skyline end -->', readme, flags=re.DOTALL)
+          with open('README.md', 'w') as f:
+              f.write(readme)
+          "
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git commit -m "Update GitHub Skyline ASCII Art" || echo "No changes to commit"
+          git push
