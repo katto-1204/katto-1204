@@ -1,37 +1,28 @@
-```yaml
 name: Generate Metrics
-
 on:
-  schedule:
-    - cron: "0 0 * * *"
+  # Update automatically every 24 hours
+  schedule: [{cron: "0 0 * * *"}]
   workflow_dispatch:
-
+  push: {branches: ["main"]}
 jobs:
   github-metrics:
     runs-on: ubuntu-latest
-
     permissions:
       contents: write
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      # Main metrics card
-      - name: Generate main metrics
-        uses: lowlighter/metrics@latest
+      - uses: actions/checkout@v3
+      - uses: lowlighter/metrics@latest
         with:
           filename: github-metrics.svg
           token: ${{ secrets.METRICS_TOKEN }}
           base: header, activity, community, repositories, metadata
+          # You can customize these plugins based on the screenshot
           plugin_isocalendar: yes
           plugin_isocalendar_duration: full-year
           plugin_followup: yes
           plugin_followup_sections: repositories
 
-      # Secondary metrics card (NO habits or achievements)
-      - name: Generate secondary metrics
-        uses: lowlighter/metrics@latest
+      - uses: lowlighter/metrics@latest
         with:
           filename: github-metrics-right-1.svg
           token: ${{ secrets.METRICS_TOKEN }}
@@ -45,45 +36,40 @@ jobs:
           plugin_languages_sections: most-used, recently-used
           plugin_topics: yes
           plugin_topics_mode: icons
+          plugin_repositories: yes
+          plugin_repositories_featured: katto-1204/katto-1204
 
-      # Generate Skyline
+      - uses: lowlighter/metrics@latest
+        with:
+          filename: github-metrics-right-2.svg
+          token: ${{ secrets.METRICS_TOKEN }}
+          base: ""
+          plugin_habits: yes
+          plugin_habits_charts: yes
+          plugin_habits_facts: yes
+          plugin_achievements: yes
+          plugin_achievements_display: compact
+
       - name: Generate ASCII Skyline
         env:
           GH_TOKEN: ${{ secrets.METRICS_TOKEN }}
         run: |
           gh extension install github/gh-skyline
-
           gh skyline --user katto-1204 --year 2024 --art-only > skyline.txt
-
-          python << EOF
+          python -c "
           import re
-
-          with open("skyline.txt", encoding="utf-8") as f:
+          with open('skyline.txt', 'r', encoding='utf-8') as f:
               skyline = f.read()
-
-          with open("README.md", encoding="utf-8") as f:
+          with open('README.md', 'r', encoding='utf-8') as f:
               readme = f.read()
-
-          skyline = re.sub(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])', '', skyline)
-
-          pattern = r'<!-- skyline start -->.*?<!-- skyline end -->'
-
-          replacement = f'''<!-- skyline start -->
-<pre>
-{skyline}
-</pre>
-<!-- skyline end -->'''
-
-          readme = re.sub(pattern, replacement, readme, flags=re.DOTALL)
-
-          with open("README.md", "w", encoding="utf-8") as f:
+          ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+          skyline = ansi_escape.sub('', skyline)
+          readme = re.sub(r'<!-- skyline start -->.*<!-- skyline end -->', f'<!-- skyline start -->\n<pre>\n{skyline}\n</pre>\n<!-- skyline end -->', readme, flags=re.DOTALL)
+          with open('README.md', 'w', encoding='utf-8') as f:
               f.write(readme)
-          EOF
-
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
+          "
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add README.md
-          git diff --cached --quiet || git commit -m "Update GitHub Skyline"
+          git commit -m \"Update GitHub Skyline ASCII Art\" || echo \"No changes to commit\"
           git push
-```
