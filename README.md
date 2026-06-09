@@ -11,6 +11,7 @@
 
 <div align="center">
   <img src="github-metrics-right-1.svg" alt="Languages and Topics" />
+  <img src="github-metrics-right-2.svg" alt="Habits, Achievements and Skyline" />
   <!-- skyline start -->
   <!-- skyline end -->
 </div>
